@@ -81,8 +81,7 @@ export default function BurumbumbaiSelector() {
 
   return (
     <>
-      <h1 style={{ textAlign: "center", color: "#800020" }}>
-        {" "}
+      <h1 style={{color: "#800020" }}>
         Burumbumbai 🍕🐵​
       </h1>
 
@@ -241,3 +240,4 @@ export default function BurumbumbaiSelector() {
     </>
   );
 }
+
