@@ -47,8 +47,7 @@ export default function BurumbumbaiSelector() {
   const frittoCount = {};
   const [name, setName] = useState("");
 
-  //CONTA PIZZE
-
+  // CONTA PIZZE
   selectedPizza.forEach((pizza) => {
     if (pizzaCount[pizza]) {
       pizzaCount[pizza] += 1;
@@ -57,8 +56,7 @@ export default function BurumbumbaiSelector() {
     }
   });
 
-  // CONTA fritti
-
+  // CONTA FRITTI
   selectedFritto.forEach((fritto) => {
     if (frittoCount[fritto]) {
       frittoCount[fritto] += 1;
@@ -67,30 +65,52 @@ export default function BurumbumbaiSelector() {
     }
   });
 
-  function sendOrder() {
-    const ordine = {
-      nome: name,
-      pizze: pizzaCount,
-      fritti: frittoCount,
-    };
+  // FUNZIONE INVIO ORDINE SU TELEGRAM
+  async function sendOrder() {
+    let message = `🍕 ORDINE BURUMBUMBAI 🍕\n\n`;
+    message += `Nome: ${name}\n\n`;
 
-    console.log("Ordine inviato:", ordine);
+    message += `Pizze:\n`;
+    Object.entries(pizzaCount).forEach(([pizza, count]) => {
+      message += `${pizza} x${count}\n`;
+    });
 
-    alert("Ordine inviato! 🍕📩");
+    message += `\nFritti:\n`;
+    Object.entries(frittoCount).forEach(([fritto, count]) => {
+      message += `${fritto} x${count}\n`;
+    });
+
+    const token = "8728447970:AAHx1wm2-0N2gD0_zVxIYxP7O3UEvoPIdgk";
+    const chatId = "403442754";
+
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+    try {
+      await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: message }),
+      });
+
+      alert("Ordine inviato! 🍕📩");
+
+      // Reset ordine dopo invio
+      setSelectedPizza([]);
+      setSelectedFritto([]);
+      setName("");
+    } catch (err) {
+      console.error("Errore invio ordine:", err);
+      alert("Errore nell'invio dell'ordine 😢");
+    }
   }
 
   return (
     <>
-      <h1 style={{color: "#800020" }}>
-        Burumbumbai 🍕🐵​
-      </h1>
+      <h1 style={{ color: "#800020" }}>Burumbumbai 🍕🐵​</h1>
 
       <div style={{ display: "flex", gap: "100px" }}>
-        <div
-          style={{ display: "flex", flexDirection: "column", width: "300px" }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", width: "300px" }}>
           <h1>Scegli la tua pizza 🍕😋</h1>
-
           {pizze.map((pizza) => (
             <button
               key={pizza}
@@ -100,20 +120,13 @@ export default function BurumbumbaiSelector() {
               {pizza}
             </button>
           ))}
-
-          <button
-            onClick={() => setSelectedPizza([])}
-            disabled={selectedPizza.length === 0}
-          >
+          <button onClick={() => setSelectedPizza([])} disabled={selectedPizza.length === 0}>
             Aricominciamo 🔄
           </button>
         </div>
 
-        <div
-          style={{ display: "flex", flexDirection: "column", width: "300px" }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", width: "300px" }}>
           <h1>Scegli il tuo fritto 🍟😋</h1>
-
           {fritti.map((fritto) => (
             <button
               key={fritto}
@@ -123,11 +136,7 @@ export default function BurumbumbaiSelector() {
               {fritto}
             </button>
           ))}
-
-          <button
-            onClick={() => setSelectedFritto([])}
-            disabled={selectedFritto.length === 0}
-          >
+          <button onClick={() => setSelectedFritto([])} disabled={selectedFritto.length === 0}>
             Aricominciamo 🔄
           </button>
         </div>
@@ -136,17 +145,12 @@ export default function BurumbumbaiSelector() {
       <hr style={{ marginBottom: "25px", marginTop: "25px" }} />
 
       <div style={{ display: "flex", gap: "150px" }}>
-        <div
-          style={{ display: "flex", flexDirection: "column", width: "300px" }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", width: "300px" }}>
           <h3>Pizze scelte 🍕😋</h3>
-
           <p>Totale: {selectedPizza.length} pizze 🍕</p>
-
           {Object.entries(pizzaCount).map(([pizza, count]) => (
             <div key={pizza} style={{ marginBottom: "5px" }}>
               {pizza}
-
               <button
                 onClick={() => {
                   const newList = [...selectedPizza];
@@ -158,31 +162,18 @@ export default function BurumbumbaiSelector() {
               >
                 ➖
               </button>
-
               <span style={{ margin: "0 10px", color: "red" }}>{count}</span>
-
-              <button
-                onClick={() => {
-                  setSelectedPizza([...selectedPizza, pizza]);
-                }}
-              >
-                ➕
-              </button>
+              <button onClick={() => setSelectedPizza([...selectedPizza, pizza])}>➕</button>
             </div>
           ))}
         </div>
 
-        <div
-          style={{ display: "flex", flexDirection: "column", width: "300px" }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", width: "300px" }}>
           <h3>Fritti scelti 🍟😋</h3>
-
           <p>Totale: {selectedFritto.length} fritti 🍟</p>
-
           {Object.entries(frittoCount).map(([fritto, countFritto]) => (
             <div key={fritto} style={{ marginBottom: "5px" }}>
               {fritto}
-
               <button
                 onClick={() => {
                   const newListFritto = [...selectedFritto];
@@ -194,23 +185,15 @@ export default function BurumbumbaiSelector() {
               >
                 ➖
               </button>
-
-              <span style={{ margin: "0 10px", color: "red" }}>
-                {countFritto}
-              </span>
-
-              <button
-                onClick={() => {
-                  setSelectedFritto([...selectedFritto, fritto]);
-                }}
-              >
-                ➕
-              </button>
+              <span style={{ margin: "0 10px", color: "red" }}>{countFritto}</span>
+              <button onClick={() => setSelectedFritto([...selectedFritto, fritto])}>➕</button>
             </div>
           ))}
         </div>
       </div>
+
       <hr style={{ marginBottom: "25px", marginTop: "25px" }} />
+
       <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
         <input
           placeholder="Il tuo nome"
@@ -218,18 +201,13 @@ export default function BurumbumbaiSelector() {
           onChange={(e) => setName(e.target.value)}
           style={{ padding: "8px" }}
         />
-
         <button
           onClick={sendOrder}
-          disabled={
-            name === "" ||
-            (selectedPizza.length === 0 && selectedFritto.length === 0)
-          }
+          disabled={name === "" || (selectedPizza.length === 0 && selectedFritto.length === 0)}
           style={{
             padding: "8px",
             cursor:
-              name === "" ||
-              (selectedPizza.length === 0 && selectedFritto.length === 0)
+              name === "" || (selectedPizza.length === 0 && selectedFritto.length === 0)
                 ? "not-allowed"
                 : "pointer",
           }}
@@ -240,4 +218,3 @@ export default function BurumbumbaiSelector() {
     </>
   );
 }
-
